@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "vacancies-db"
+version = "0.1.0"
+description = ""
+authors = ["nnikitenko <nnikitenko@aorti.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+requests = "^2.31.0"
+psycopg2-binary = "^2.9.9"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.2.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
