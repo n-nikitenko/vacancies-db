@@ -23,8 +23,7 @@ def main():
 
     hh_api = HeadHunterAPI()
 
-    print("\nПолучение вакансий с сервера. Пожалуйста, подождите.")
-    path = os.path.join("data", "companies2.json")
+    path = os.path.join(f"..{os.sep}data", "companies.json")
     try:
         companies = load_companies(path)
     except FileNotFoundError as e:
@@ -44,14 +43,17 @@ def main():
             {"5724503": "Amex Development"}
         ]
 
+    print(f"\n{Fore.GREEN}Получение вакансий с сервера. Пожалуйста, подождите.")
+    print(Style.RESET_ALL)
     hh_vacancies = hh_api.get_vacancies(companies)
+
     print(f"{Fore.GREEN}Запрос вакансий по api. Пожалуйста, подождите.")
     print(Style.RESET_ALL)
     vacancies_list = Vacancy.cast_to_object_list(hh_vacancies)
-    print(f"\n{Fore.GREEN}Сохранение вакансий в базу данных. Пожалуйста, подождите.")
-    print(Style.RESET_ALL)
 
     with DBManager(dbname, db_config) as db:
+        print(f"{Fore.GREEN}Сохранение вакансий в базу данных. Пожалуйста, подождите.")
+        print(Style.RESET_ALL)
         db.save_companies(companies)
         db.save_vacancies(vacancies_list)
 
