@@ -28,7 +28,7 @@ class HeadHunterAPI:
         self.__params['employer_id'] = list([list(e.keys())[0] for e in employers])
         self.__params['page'] = 0
         self.__params['currency'] = 'RUR'
-        pages = 2
+        pages = 20
         while self.__params.get('page') < pages:
             try:
                 response = requests.get(self.__base_url, headers=self.__headers, params=self.__params, timeout=1)
