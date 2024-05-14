@@ -55,12 +55,26 @@ class DBManager:
             """).format(vacancies=sql.Identifier(self.__vacancies_table_name),
                         employers=sql.Identifier(self.__employers_table_name)))
 
+    def clear(self):
+        """Очищает таблицы БД"""
+
+        with self.conn:
+
+            self.cur.execute(sql.SQL("""
+            TRUNCATE TABLE {vacancies} CASCADE;
+            """).format(vacancies=sql.Identifier(self.__vacancies_table_name)))
+            self.conn.commit()
+            self.cur.execute(sql.SQL("""
+                                    TRUNCATE TABLE {employers} CASCADE;
+                                    """).format(employers=sql.Identifier(self.__employers_table_name)))
+
+
     def get_companies_and_vacancies_count(self) -> List[dict]:
         """получает список всех компаний и количество вакансий у каждой компании"""
 
         with self.conn:
-            self.cur.execute(sql.SQL("SELECT employer_name, COUNT(vacancy_id) from {vacancies} "
-                                     "JOIN {employers} "
+            self.cur.execute(sql.SQL("SELECT employer_name, COUNT(vacancy_id) from {employers} "
+                                     "LEFT JOIN {vacancies} "
                                      "USING(employer_id) "
                                      "GROUP BY employer_name "
                                      "ORDER BY COUNT(vacancy_id) DESC").format(
@@ -114,7 +128,7 @@ class DBManager:
             self.cur.execute(
                 sql.SQL("SELECT vacancy_id, name, employer_id, employer_name, url, salary from {vacancies} "
                         "JOIN {employers} USING(employer_id) "
-                        "WHERE LOWER(name) LIKE '%%' || LOWER(%s) || '%%'"
+                        "WHERE name ILIKE '%%' || %s || '%%'"
                         "ORDER BY salary DESC;").format(
                     vacancies=sql.Identifier(self.__vacancies_table_name),
                     employers=sql.Identifier(self.__employers_table_name)), (keyword,))
