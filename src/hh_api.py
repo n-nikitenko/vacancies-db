@@ -5,6 +5,8 @@ from typing import List
 import requests
 from colorama import Fore, Style
 
+from src.vacancy import Vacancy
+
 
 class HeadHunterAPI:
     """
@@ -23,12 +25,18 @@ class HeadHunterAPI:
         self.__vacancies = []
 
     def get_vacancies(self, employers: List[dict]) -> list:
-        """получает список вакансий, опубликованных заданными компаниями (из списка employers)"""
+        """возвращает список вакансий, опубликованных заданными компаниями (из списка employers),
+        с зарплатой в рублях, либо с неуказанным значением зарплаты"""
+
+        def salary_in_rur_or_none(vacancy: dict) -> bool:
+            salary = vacancy.get('salary')
+            if salary:
+                return salary.get('currency') == 'RUR'
+            return True
 
         self.__vacancies.clear()
         self.__params['employer_id'] = list([list(e.keys())[0] for e in employers])
         self.__params['page'] = 0
-        self.__params['currency'] = 'RUR'
         pages = 20
         while self.__params.get('page') < pages:
             try:
@@ -42,7 +50,7 @@ class HeadHunterAPI:
                 if response.status_code == 200:
                     response_json = response.json()
                     pages = response_json['pages']
-                    vacancies = response_json['items']
+                    vacancies = filter(salary_in_rur_or_none, response_json['items'])
                     self.__vacancies.extend(vacancies)
                     self.__params['page'] += 1
                 else:  # todo: уточнить бизнес-логику
