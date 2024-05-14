@@ -23,7 +23,8 @@ class HeadHunterAPI:
         self.__vacancies = []
 
     def get_vacancies(self, employers: List[dict]) -> list:
-        '''получает список вакансий, опубликованных заданными компаниями (из списка employers)'''
+        """получает список вакансий, опубликованных заданными компаниями (из списка employers)"""
+
         self.__vacancies.clear()
         self.__params['employer_id'] = list([list(e.keys())[0] for e in employers])
         self.__params['page'] = 0
@@ -33,7 +34,8 @@ class HeadHunterAPI:
             try:
                 response = requests.get(self.__base_url, headers=self.__headers, params=self.__params, timeout=1)
             except requests.exceptions.Timeout as e:
-                print(f"{Fore.YELLOW}Истекло время ожидания ответа сервера. Попробуйте позже.")  # todo: уточнить бизнес-логику
+                print(f"{Fore.YELLOW}Истекло время ожидания ответа сервера. Попробуйте позже.")  # todo: уточнить
+                # бизнес-логику
                 print(Style.RESET_ALL)
                 return copy.deepcopy(self.__vacancies)
             else:

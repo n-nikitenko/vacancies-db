@@ -10,15 +10,17 @@ from src.vacancy import Vacancy
 
 
 def main():
-    load_dotenv()
-
-    dbname = os.getenv('POSTGRES_DB')
+    if not load_dotenv():
+        print(f"{Fore.RED}Не найден файл с настройками подключения к БД: '.env'")
+        print(Style.RESET_ALL)
+        exit()
 
     db_config = {
+        'dbname': os.getenv('POSTGRES_DB'),
         'user': os.getenv('POSTGRES_USER'),
         'password': os.getenv('POSTGRES_PASSWORD'),
-        'host': os.getenv('POSTGRES_HOST') or 'localhost',
-        'port': os.getenv('POSTGRES_PORT') or '5432'
+        'host': os.getenv('POSTGRES_HOST', 'localhost'),
+        'port': os.getenv('POSTGRES_PORT', '5432')
     }
 
     hh_api = HeadHunterAPI()
@@ -47,11 +49,9 @@ def main():
     print(Style.RESET_ALL)
     hh_vacancies = hh_api.get_vacancies(companies)
 
-    print(f"{Fore.GREEN}Запрос вакансий по api. Пожалуйста, подождите.")
-    print(Style.RESET_ALL)
     vacancies_list = Vacancy.cast_to_object_list(hh_vacancies)
 
-    with DBManager(dbname, db_config) as db:
+    with DBManager(db_config) as db:
         print(f"{Fore.GREEN}Сохранение вакансий в базу данных. Пожалуйста, подождите.")
         print(Style.RESET_ALL)
         db.save_companies(companies)
