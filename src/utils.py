@@ -7,7 +7,7 @@ from src.dbmanager import DBManager
 
 
 def print_menu():
-    '''выводит на экран меню программы'''
+    """выводит на экран меню программы"""
 
     return input("Введите:\n"
                  "1 - просмотр среднего значения зарплаты\n"
@@ -18,7 +18,7 @@ def print_menu():
 
 
 def print_vacancies_by_keyword(db: DBManager):
-    '''выводит на экран список вакансий, отфильтрованных по ключевому слову в названии'''
+    """выводит на экран список вакансий, отфильтрованных по ключевому слову в названии"""
 
     keyword = input("Введите ключевое слово для фильтрации вакансий: ").strip() or "python"
     filtered_vacancies = db.get_vacancies_with_keyword(keyword)
@@ -34,7 +34,7 @@ def print_vacancies_by_keyword(db: DBManager):
 
 
 def print_all_vacancies(db: DBManager):
-    '''выводит на экран список всех вакансий'''
+    """выводит на экран список всех вакансий"""
 
     all_vacancies = db.get_all_vacancies()
     if all_vacancies:
@@ -49,7 +49,7 @@ def print_all_vacancies(db: DBManager):
 
 
 def print_companies(db: DBManager):
-    '''выводит на экран список компаний и кол-во опбуликованных вакансий'''
+    """выводит на экран список компаний и кол-во опбуликованных вакансий"""
 
     companies_and_vacancies_count = db.get_companies_and_vacancies_count()
     t = PrettyTable(['Компания', 'Кол-во вакансий'])
@@ -60,7 +60,7 @@ def print_companies(db: DBManager):
 
 
 def load_companies(path: str) -> List[dict]:
-    '''загружает список словарей формата id компании: название компании из json'''
+    """загружает список словарей формата id компании: название компании из json"""
 
     with open(path, 'r', encoding='utf-8') as f:
         companies = load(f)
